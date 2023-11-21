@@ -10,33 +10,27 @@
 
 using namespace std;
 
-bool BFS(Graph* graph, char option, int vertex)
-{
+bool BFS(Graph* graph, char option, int vertex) {
    
 }
 
-bool DFS(Graph* graph, char option, int vertex)
-{
-   
- }
-
-bool Kruskal(Graph* graph)
-{
+bool DFS(Graph* graph, char option, int vertex) {
    
 }
 
-bool Dijkstra(Graph* graph, char option, int vertex)
-{
+bool Kruskal(Graph* graph) {
    
 }
 
-bool Bellmanford(Graph* graph, char option, int s_vertex, int e_vertex) 
-{
+bool Dijkstra(Graph* graph, char option, int vertex) {
    
 }
 
-bool FLOYD(Graph* graph, char option)
-{
+bool Bellmanford(Graph* graph, char option, int s_vertex, int e_vertex) {
+   
+}
+
+bool FLOYD(Graph* graph, char option) {
    
 }
 

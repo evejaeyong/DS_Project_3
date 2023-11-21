@@ -3,7 +3,7 @@
 
 #include "Graph.h"
 
-class ListGraph : public Graph{	
+class ListGraph : public Graph {	
 private:
 	map < int, int >* m_List;
 	vector<int>* kw_graph;

@@ -3,7 +3,7 @@
 #include <map>
 #include "Graph.h"
 
-class MatrixGraph : public Graph{	
+class MatrixGraph : public Graph {	
 private:
 	int** m_Mat;
 

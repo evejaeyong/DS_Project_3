@@ -16,7 +16,7 @@
 
 using namespace std;
 
-class Graph{	
+class Graph {	
 protected:
 	bool m_Type;
 	int m_Size;
