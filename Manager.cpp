@@ -99,11 +99,30 @@ bool Manager::LOAD(const char* filename) {
 
 		if (m_type) {		//list
 			Graph* graph = new ListGraph(m_type, size);
+			string line;
+			int from = 0;
+			while (getline(fgraph, line)) {
+				int num = 0;
+				while (line[num] != '\n' && line[num] != ' ') num++;
+				
+				if (line[num] == ' ') {
+					string to, weight;
+					num = 0;
+					while (line[num] != ' ') {
+						to.push_back(line[num]);
+						num++;
+					}
+					num++;
+					while (line[num] != '\n') {
+						to.push_back(line[num]);
+						num++;
+					}
+					graph->insertEdge(from, stoi(to), stoi(weight));
+				}
+				else from = stoi(line);
+				
+			}
 
-
-
-			//구현해야합니다...
-			
 		}
 		else {				//matrix
 			Graph* graph = new MatrixGraph(m_type, size);
