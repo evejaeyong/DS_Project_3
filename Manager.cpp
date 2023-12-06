@@ -33,12 +33,15 @@ void Manager::run(const char* command_txt) {
 			if (command == "LOAD") {
 				string filename;
 				fin >> filename;
-				if(!LOAD(filename.c_str())) {
-					printErrorCode(100);
+				if(LOAD(filename.c_str())) {
+					fout << "========LOAD=======\n";
+					fout << "Success\n";
+					fout << "===================\n\n";
 				}
+				else printErrorCode(100);
 			}
 			else if (command == "PRINT") {
-
+				if (!PRINT()) printErrorCode(200);
 			}
 			else if (command == "BFS") {
 				
@@ -118,7 +121,12 @@ bool Manager::LOAD(const char* filename) {
 }
 
 bool Manager::PRINT() {
+	if (!graph) return false;
 
+	fout << "========PRINT=======\n";
+	graph->printGraph(&fout);
+	fout << "====================\n\n";
+	return true;
 }
 
 bool Manager::mBFS(char option, int vertex)	{

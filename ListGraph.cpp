@@ -25,5 +25,11 @@ void ListGraph::insertEdge(int from, int to, int weight) {              //Defini
 }
 
 bool ListGraph::printGraph(ofstream *fout) {                            //Definition of print Graph
-	
+	for (int i = 1; i <= m_Size; i++) {
+		*fout << "[" << i << "]";
+		for (auto iter : m_List[i]) {
+			*fout << " -> (" << iter.first << "," << iter.second << ")";
+		}
+		*fout << "\n";
+	}
 }
