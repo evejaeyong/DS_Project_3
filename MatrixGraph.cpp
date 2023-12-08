@@ -18,15 +18,20 @@ MatrixGraph::~MatrixGraph() {
 }
 
 void MatrixGraph::getAdjacentEdges(int vertex, map<int, int>* m) {	
-
+    for (int i = 0; i < m_Size; i++) {
+        if (m_Mat[vertex - 1][i] != 0) m->insert({i + 1, m_Mat[vertex - 1][i]});
+        if (m_Mat[i][vertex - 1] != 0) m->insert({i + 1, m_Mat[vertex - 1][i]});
+    }
 }
 
 void MatrixGraph::getAdjacentEdgesDirect(int vertex, map<int, int>* m) {
-	
+    for (int i = 0; i < m_Size; i++) {
+        if (m_Mat[vertex - 1][i] != 0) m->insert({i + 1, m_Mat[vertex - 1][i]});
+    }
 }
 
 void MatrixGraph::insertEdge(int from, int to, int weight) {
-	m_Mat[from][to] = weight;
+	m_Mat[from - 1][to - 1] = weight;
 }
 
 bool MatrixGraph::printGraph(ofstream *fout) {
@@ -35,12 +40,12 @@ bool MatrixGraph::printGraph(ofstream *fout) {
         *fout << "[" << i << "]\t";
     }
 
-    for (int i = 1; i <= m_Size; i++) {
+    for (int i = 0; i < m_Size; i++) {
         for (int j = -1; j < m_Size; j++) {
-            if (j == -1) *fout << "[" << i << "]\t";
+            if (j == -1) *fout << "[" << i + 1 << "]\t";
             else *fout << m_Mat[i][j] << "\t";
         }
         *fout << "\n";
     }
-    return true;
+    return;
 }

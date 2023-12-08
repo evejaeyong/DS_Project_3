@@ -27,13 +27,23 @@ void Manager::run(const char* command_txt) {
 		return;	//Return
 	}
 	else {
-		string command;
 		while (1) {
-			fin >> command;
+			string line, command;
+			int num = 0;
+			getline(fin, line);
+			while (line[num] != '\n' && line[num] != ' ') {
+				command.push_back(line[num]);
+				num++;
+			}
 			if (command == "LOAD") {
 				string filename;
-				fin >> filename;
-				if(LOAD(filename.c_str())) {
+				num++;
+				while (line[num] != '\n') {			//file name
+					filename.push_back(line[num]);
+					num++;
+				}
+				if (filename.size() == 0) printErrorCode(100);	//if file doesn't exist
+				else if(LOAD(filename.c_str())) {
 					fout << "========LOAD=======\n";
 					fout << "Success\n";
 					fout << "===================\n\n";
@@ -105,7 +115,7 @@ bool Manager::LOAD(const char* filename) {
 				int num = 0;
 				while (line[num] != '\n' && line[num] != ' ') num++;
 				
-				if (line[num] == ' ') {
+				if (line[num] == ' ') {				//parsing to, weight
 					string to, weight;
 					num = 0;
 					while (line[num] != ' ') {
@@ -127,8 +137,8 @@ bool Manager::LOAD(const char* filename) {
 		else {				//matrix
 			Graph* graph = new MatrixGraph(m_type, size);
 			int num;
-			for (int i = 0; i < size; i++) {
-				for (int j = 0; j < size; j++) {
+			for (int i = 1; i <= size; i++) {
+				for (int j = 1; j <= size; j++) {
 					fgraph >> num;
 					graph->insertEdge(i, j, num);
 				}
@@ -149,11 +159,13 @@ bool Manager::PRINT() {
 }
 
 bool Manager::mBFS(char option, int vertex)	{
-	
+	if (BFS(graph, option, vertex)) return true;
+	else return false;
 }
 
 bool Manager::mDFS(char option, int vertex)	{
-	
+	if (DFS(graph, option, vertex)) return true;
+	else return false;
 }
 
 bool Manager::mDIJKSTRA(char option, int vertex) {
