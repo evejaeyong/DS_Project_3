@@ -54,10 +54,40 @@ void Manager::run(const char* command_txt) {
 				if (!PRINT()) printErrorCode(200);
 			}
 			else if (command == "BFS") {
-				
+				num++;
+				if (line[num] == 'Y' || line[num] == 'N') {
+					char option = line[num];
+					num++;
+					if (line[num] == '\n') printErrorCode(300);
+					else {
+						string vertex;
+						while (line[num] != '\n') vertex.push_back(line[num++]);
+
+						if (!mBFS(option, stoi(vertex))) {
+							fout.open("log.txt", ios::app);
+							printErrorCode(300);
+						}
+					}
+				}
+				else printErrorCode(300);
 			}
 			else if (command == "DFS") {
-				
+				num++;
+				if (line[num] == 'Y' || line[num] == 'N') {
+					char option = line[num];
+					num++;
+					if (line[num] == '\n') printErrorCode(400);
+					else {
+						string vertex;
+						while (line[num] != '\n') vertex.push_back(line[num++]);
+
+						if (!mDFS(option, stoi(vertex))) {
+							fout.open("log.txt", ios::app);
+							printErrorCode(400);
+						}
+					}
+				}
+				else printErrorCode(400);
 			}
 			else if (command == "KWANGWOON") {
 				
@@ -159,11 +189,13 @@ bool Manager::PRINT() {
 }
 
 bool Manager::mBFS(char option, int vertex)	{
+	fout.close();
 	if (BFS(graph, option, vertex)) return true;
 	else return false;
 }
 
 bool Manager::mDFS(char option, int vertex)	{
+	fout.close();
 	if (DFS(graph, option, vertex)) return true;
 	else return false;
 }

@@ -12,15 +12,15 @@ MatrixGraph::MatrixGraph(bool type, int size) : Graph(type, size) {
 
 MatrixGraph::~MatrixGraph() {
     for (int i = 0; i < m_Size; i++) {
-        delete m_Mat[i];
+        delete[] m_Mat[i];
     }
-    delete m_Mat;
+    delete[] m_Mat;
 }
 
 void MatrixGraph::getAdjacentEdges(int vertex, map<int, int>* m) {	
     for (int i = 0; i < m_Size; i++) {
         if (m_Mat[vertex - 1][i] != 0) m->insert({i + 1, m_Mat[vertex - 1][i]});
-        if (m_Mat[i][vertex - 1] != 0) m->insert({i + 1, m_Mat[vertex - 1][i]});
+        if (m_Mat[i][vertex - 1] != 0) m->insert({i + 1, m_Mat[i][vertex - 1]});
     }
 }
 
@@ -47,5 +47,5 @@ bool MatrixGraph::printGraph(ofstream *fout) {
         }
         *fout << "\n";
     }
-    return;
+    return true;
 }

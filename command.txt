@@ -1,0 +1,6 @@
+LOAD
+LOAD aaaa
+LOAD graph_L.txt
+PRINT
+BFS Y 1
+EXIT
