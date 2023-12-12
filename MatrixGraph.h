@@ -15,6 +15,8 @@ public:
 	void getAdjacentEdgesDirect(int vertex, map<int, int>* m);
 	void insertEdge(int from, int to, int weight);	
 	bool printGraph(ofstream *fout);
+
+	vector<int>* Get_KW_Graph();
 };
 
 #endif

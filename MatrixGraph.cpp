@@ -49,3 +49,7 @@ bool MatrixGraph::printGraph(ofstream *fout) {
     }
     return true;
 }
+
+vector<int>* MatrixGraph::Get_KW_Graph() {
+    return NULL;
+}

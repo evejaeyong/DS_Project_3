@@ -100,12 +100,7 @@ void Manager::run(const char* command_txt) {
 			}
 			else if (command == "KWANGWOON") {
 				if (!fout.is_open()) fout.open("log.txt", ios::app);
-
-
-
-
-
-
+				if (!mKwoonWoon(1)) printErrorCode(500);
 			}
 			else if (command == "KRUSKAL") {
 				if (!fout.is_open()) fout.open("log.txt", ios::app);
@@ -291,6 +286,8 @@ bool Manager::mFLOYD(char option) {
 }
 
 bool Manager::mKwoonWoon(int vertex) {
+	if (fout.is_open()) fout.close();		//if log file is open
+	if (KWANGWOON(graph, vertex)) return true;
 	return false;
 }
 
@@ -300,5 +297,3 @@ void Manager::printErrorCode(int n) {
 	fout << n << endl;
 	fout << "====================" << endl << endl;
 }
-
-

@@ -4,7 +4,7 @@
 
 ListGraph::ListGraph(bool type, int size) : Graph(type, size) {
 	m_List = new map<int, int>[size];
-    kw_graph = new vector<int>[size];
+    kw_graph = new vector<int>[size + 1];
 }
 
 ListGraph::~ListGraph()	{
@@ -32,6 +32,8 @@ void ListGraph::getAdjacentEdgesDirect(int vertex, map<int, int>* m) {  //Defini
 
 void ListGraph::insertEdge(int from, int to, int weight) {              //Definition of insertEdge
 	m_List[from - 1].insert({to, weight});
+	kw_graph[from].push_back(to);
+	kw_graph[to].push_back(from);
 }
 
 bool ListGraph::printGraph(ofstream *fout) {                            //Definition of print Graph
@@ -43,4 +45,8 @@ bool ListGraph::printGraph(ofstream *fout) {                            //Defini
 		*fout << "\n";
 	}
 	return true;
+}
+
+vector<int>* ListGraph::Get_KW_Graph() {
+	return kw_graph;
 }
