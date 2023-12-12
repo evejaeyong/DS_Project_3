@@ -36,6 +36,7 @@ void Manager::run(const char* command_txt) {
 				num++;
 			}
 			if (command == "LOAD") {
+				if (!fout.is_open()) fout.open("log.txt", ios::app);
 				string filename;
 				if (line[num] == '\0') printErrorCode(100);
 				else {
@@ -54,12 +55,13 @@ void Manager::run(const char* command_txt) {
 				}
 			}
 			else if (command == "PRINT") {
+				if (!fout.is_open()) fout.open("log.txt", ios::app);
 				if (!PRINT()) printErrorCode(200);	//PRINT Fail (Doesn't have graph data)
 			}
 			else if (command == "BFS") {
-				if (line[num] == '\0') printErrorCode(300);
-				num++;
-				if (line[num] == 'Y' || line[num] == 'N') {
+				if (!fout.is_open()) fout.open("log.txt", ios::app);
+				if (line[num++] == '\0') printErrorCode(300);			//Lack of function factors
+				else if (line[num] == 'Y' || line[num] == 'N') {
 					char option = line[num];
 					num++;
 					if (line[num] == '\0') printErrorCode(300);		//Lack of function factors
@@ -77,9 +79,9 @@ void Manager::run(const char* command_txt) {
 				fout.open("log.txt", ios::app);
 			}
 			else if (command == "DFS") {
-				if (line[num] == '\0') printErrorCode(400);
-				num++;
-				if (line[num] == 'Y' || line[num] == 'N') {
+				if (!fout.is_open()) fout.open("log.txt", ios::app);
+				if (line[num++] == '\0') printErrorCode(400);			//Lack of function factors
+				else if (line[num] == 'Y' || line[num] == 'N') {
 					char option = line[num];
 					num++;
 					if (line[num] == '\0') printErrorCode(400);		//Lack of function factors
@@ -97,15 +99,22 @@ void Manager::run(const char* command_txt) {
 				fout.open("log.txt", ios::app);
 			}
 			else if (command == "KWANGWOON") {
-				
+				if (!fout.is_open()) fout.open("log.txt", ios::app);
+
+
+
+
+
+
 			}
 			else if (command == "KRUSKAL") {
-				
+				if (!fout.is_open()) fout.open("log.txt", ios::app);
+				if (!mKRUSKAL()) printErrorCode(600);
 			}
 			else if (command == "DIJKSTRA") {
-				if (line[num] == '\0') printErrorCode(700);
-				num++;
-				if (line[num] == 'Y' || line[num] == 'N') {
+				if (!fout.is_open()) fout.open("log.txt", ios::app);
+				if (line[num++] == '\0') printErrorCode(700);			//Lack of function factors
+				else if (line[num] == 'Y' || line[num] == 'N') {
 					char option = line[num];
 					num++;
 					if (line[num] == '\0') printErrorCode(700);		//Lack of function factors
@@ -114,7 +123,7 @@ void Manager::run(const char* command_txt) {
 						while (line[num] != '\0') vertex.push_back(line[num++]);
 
 						if (!mDIJKSTRA(option, stoi(vertex))) {
-							fout.open("log.txt", ios::app);			//DFS Fail
+							fout.open("log.txt", ios::app);			//Dijkstra Fail
 							printErrorCode(700);
 						}
 					}
@@ -123,12 +132,45 @@ void Manager::run(const char* command_txt) {
 				fout.open("log.txt", ios::app);
 			}
 			else if (command == "BELLMANFORD") {
-				
+				if (!fout.is_open()) fout.open("log.txt", ios::app);
+				if (line[num++] == '\0') printErrorCode(800);			//Lack of function factors
+				else if (line[num] == 'Y' || line[num] == 'N') {
+					char option = line[num];
+					num++;
+					if (line[num] == '\0') printErrorCode(800);		//Lack of function factors
+					else {
+						num++;
+						string s_vertex, e_vertex;
+						while (line[num] != ' ' && line[num] != '\0') s_vertex.push_back(line[num++]);
+						if (line[num] == '\0') printErrorCode(800);	//Lack of function factors
+						else {
+							num++;
+							while (line[num] != '\0') e_vertex.push_back(line[num++]);
+
+							if (!mBELLMANFORD(option, stoi(s_vertex), stoi(e_vertex))) {
+								fout.open("log.txt", ios::app);			//Bellman-Ford Fail
+								printErrorCode(800);
+							}
+						}
+					}
+				}
+				else printErrorCode(800);
+				fout.open("log.txt", ios::app);
 			}
 			else if (command == "FLOYD") {
+				if (!fout.is_open()) fout.open("log.txt", ios::app);
+				if (line[num++] == '\0') printErrorCode(900);			//Lack of function factors
+				else if (line[num] == 'Y' || line[num] == 'N') {
+					if (!mFLOYD(line[num])) {
+						fout.open("log.txt", ios::app);			//Floyd Fail
+						printErrorCode(900);
+					}
+				}
+				else printErrorCode(900);
 				
 			}
 			else if (command == "EXIT") {
+				if (!fout.is_open()) fout.open("log.txt", ios::app);
 				fout << "========EXIT=======\n";
 				fout << "Success\n";
 				fout << "===================\n\n";
@@ -237,11 +279,15 @@ bool Manager::mKRUSKAL() {
 }
 
 bool Manager::mBELLMANFORD(char option, int s_vertex, int e_vertex) {
-	return false;
+	if (fout.is_open()) fout.close();		//if log file is open
+	if (Bellmanford(graph, option, s_vertex, e_vertex)) return true;
+	else return false;
 }
 
 bool Manager::mFLOYD(char option) {
-	return false;
+	if (fout.is_open()) fout.close();		//if log file is open
+	if (FLOYD(graph, option)) return true;
+	else return false;
 }
 
 bool Manager::mKwoonWoon(int vertex) {
@@ -249,6 +295,7 @@ bool Manager::mKwoonWoon(int vertex) {
 }
 
 void Manager::printErrorCode(int n) {
+	if (!fout.is_open()) fout.open("log.txt", ios::app);
 	fout << "========ERROR=======" << endl;
 	fout << n << endl;
 	fout << "====================" << endl << endl;
