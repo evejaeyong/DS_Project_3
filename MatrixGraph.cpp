@@ -39,7 +39,7 @@ bool MatrixGraph::printGraph(ofstream *fout) {
     for (int i = 1; i <= m_Size; i++) {
         *fout << "[" << i << "]\t";
     }
-
+    *fout << "\n";
     for (int i = 0; i < m_Size; i++) {
         for (int j = -1; j < m_Size; j++) {
             if (j == -1) *fout << "[" << i + 1 << "]\t";

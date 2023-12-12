@@ -7,7 +7,7 @@
 
 Manager::Manager() {
 	graph = nullptr;	
-	fout.open("log.txt", ios::app);
+	fout.open("log.txt");	//, ios::app
 	load = 0;	//Anything is not loaded
 }
 
@@ -31,63 +31,70 @@ void Manager::run(const char* command_txt) {
 			string line, command;
 			int num = 0;
 			getline(fin, line);
-			while (line[num] != '\n' && line[num] != ' ') {
+			while (line[num] != '\0' && line[num] != ' ') {
 				command.push_back(line[num]);
 				num++;
 			}
 			if (command == "LOAD") {
 				string filename;
-				num++;
-				while (line[num] != '\n') {			//file name
-					filename.push_back(line[num]);
+				if (line[num] == '\0') printErrorCode(100);
+				else {
 					num++;
+					while (line[num] != '\0') {			//file name
+						filename.push_back(line[num]);
+						num++;
+					}
+					if (filename.size() == 0) printErrorCode(100);	//if file doesn't exist
+					else if (LOAD(filename.c_str())) {
+						fout << "========LOAD=======\n";
+						fout << "Success\n";
+						fout << "===================\n\n";
+					}
+					else printErrorCode(100);		//LOAD Fail
 				}
-				if (filename.size() == 0) printErrorCode(100);	//if file doesn't exist
-				else if(LOAD(filename.c_str())) {
-					fout << "========LOAD=======\n";
-					fout << "Success\n";
-					fout << "===================\n\n";
-				}
-				else printErrorCode(100);
 			}
 			else if (command == "PRINT") {
-				if (!PRINT()) printErrorCode(200);
+				if (!PRINT()) printErrorCode(200);	//PRINT Fail (Doesn't have graph data)
 			}
 			else if (command == "BFS") {
+				if (line[num] == '\0') printErrorCode(300);
 				num++;
 				if (line[num] == 'Y' || line[num] == 'N') {
 					char option = line[num];
 					num++;
-					if (line[num] == '\n') printErrorCode(300);
+					if (line[num] == '\0') printErrorCode(300);		//Lack of function factors
 					else {
 						string vertex;
-						while (line[num] != '\n') vertex.push_back(line[num++]);
+						while (line[num] != '\0') vertex.push_back(line[num++]);
 
-						if (!mBFS(option, stoi(vertex))) {
+						if (!mBFS(option, stoi(vertex))) {			//BFS Fail
 							fout.open("log.txt", ios::app);
 							printErrorCode(300);
 						}
 					}
 				}
 				else printErrorCode(300);
+				fout.open("log.txt", ios::app);
 			}
 			else if (command == "DFS") {
+				if (line[num] == '\0') printErrorCode(400);
 				num++;
 				if (line[num] == 'Y' || line[num] == 'N') {
 					char option = line[num];
 					num++;
-					if (line[num] == '\n') printErrorCode(400);
+					if (line[num] == '\0') printErrorCode(400);		//Lack of function factors
 					else {
 						string vertex;
-						while (line[num] != '\n') vertex.push_back(line[num++]);
+						while (line[num] != '\0') vertex.push_back(line[num++]);
 
 						if (!mDFS(option, stoi(vertex))) {
-							fout.open("log.txt", ios::app);
+							fout.open("log.txt", ios::app);			//DFS Fail
 							printErrorCode(400);
 						}
 					}
 				}
 				else printErrorCode(400);
+				fout.open("log.txt", ios::app);
 			}
 			else if (command == "KWANGWOON") {
 				
@@ -96,7 +103,24 @@ void Manager::run(const char* command_txt) {
 				
 			}
 			else if (command == "DIJKSTRA") {
-				
+				if (line[num] == '\0') printErrorCode(700);
+				num++;
+				if (line[num] == 'Y' || line[num] == 'N') {
+					char option = line[num];
+					num++;
+					if (line[num] == '\0') printErrorCode(700);		//Lack of function factors
+					else {
+						string vertex;
+						while (line[num] != '\0') vertex.push_back(line[num++]);
+
+						if (!mDIJKSTRA(option, stoi(vertex))) {
+							fout.open("log.txt", ios::app);			//DFS Fail
+							printErrorCode(700);
+						}
+					}
+				}
+				else printErrorCode(700);
+				fout.open("log.txt", ios::app);
 			}
 			else if (command == "BELLMANFORD") {
 				
@@ -136,25 +160,25 @@ bool Manager::LOAD(const char* filename) {
 		else m_type = false;				//Matrix is false
 
 		fgraph >> size;
-
+		fgraph.ignore();
 		if (m_type) {		//list
-			Graph* graph = new ListGraph(m_type, size);
+			graph = new ListGraph(m_type, size);
 			string line;
 			int from = 0;
 			while (getline(fgraph, line)) {
 				int num = 0;
-				while (line[num] != '\n' && line[num] != ' ') num++;
+				while (line[num] != '\0' && line[num] != ' ') num++;
 				
 				if (line[num] == ' ') {				//parsing to, weight
 					string to, weight;
 					num = 0;
 					while (line[num] != ' ') {
-						to.push_back(line[num]);
+						to.push_back(line[num]);		//to
 						num++;
 					}
 					num++;
-					while (line[num] != '\n') {
-						to.push_back(line[num]);
+					while (line[num] != '\0') {
+						weight.push_back(line[num]);	//weight
 						num++;
 					}
 					graph->insertEdge(from, stoi(to), stoi(weight));
@@ -165,7 +189,7 @@ bool Manager::LOAD(const char* filename) {
 
 		}
 		else {				//matrix
-			Graph* graph = new MatrixGraph(m_type, size);
+			graph = new MatrixGraph(m_type, size);
 			int num;
 			for (int i = 1; i <= size; i++) {
 				for (int j = 1; j <= size; j++) {
@@ -182,42 +206,46 @@ bool Manager::LOAD(const char* filename) {
 bool Manager::PRINT() {
 	if (!graph) return false;
 
-	fout << "========PRINT=======\n";
+	fout << "========PRINT=======\n";	//Print Graph Data
 	graph->printGraph(&fout);
 	fout << "====================\n\n";
 	return true;
 }
 
 bool Manager::mBFS(char option, int vertex)	{
-	fout.close();
+	if (fout.is_open()) fout.close();		//if log file is open
 	if (BFS(graph, option, vertex)) return true;
 	else return false;
 }
 
 bool Manager::mDFS(char option, int vertex)	{
-	fout.close();
+	if (fout.is_open()) fout.close();		//if log file is open
 	if (DFS(graph, option, vertex)) return true;
 	else return false;
 }
 
 bool Manager::mDIJKSTRA(char option, int vertex) {
-	
+	if (fout.is_open()) fout.close();		//if log file is open
+	if (Dijkstra(graph, option, vertex)) return true;
+	else return false;
 }
 
 bool Manager::mKRUSKAL() {
- 	
+	if (fout.is_open()) fout.close();		//if log file is open
+	if (Kruskal(graph)) return true;
+	else return false;
 }
 
 bool Manager::mBELLMANFORD(char option, int s_vertex, int e_vertex) {
-	
+	return false;
 }
 
 bool Manager::mFLOYD(char option) {
-	
+	return false;
 }
 
 bool Manager::mKwoonWoon(int vertex) {
-	
+	return false;
 }
 
 void Manager::printErrorCode(int n) {
