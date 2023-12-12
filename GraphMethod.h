@@ -12,4 +12,9 @@ bool Dijkstra(Graph* graph, char option, int vertex);    //Dijkstra
 bool Bellmanford(Graph* graph, char option, int s_vertex, int e_vertex); //Bellman - Ford
 bool FLOYD(Graph* graph, char option);   //FLoyd
 
+void QuickSort(vector<pair<pair<int, int>, int>>* e, int left, int right);
+void InsertionSort(vector<pair<pair<int, int>, int>>* e, int left, int right);
+void Union(int vertex1, int vertex2, int* parent);
+int Find(int vertex, int* parent);
+
 #endif

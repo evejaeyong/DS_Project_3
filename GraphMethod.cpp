@@ -96,7 +96,107 @@ bool DFS(Graph* graph, char option, int vertex) {
 }
 
 bool Kruskal(Graph* graph) {
-	return false;
+	if (graph == NULL) return false;				//if doesn't have graph
+	vector<pair<pair<int, int>, int>>* e = new vector<pair<pair<int, int>, int>>;	//[(graph->getSize() * graph->getSize() - 1) / 2]
+
+	for (int i = 1; i <= graph->getSize(); i++) {
+		map <int, int>* m = new map<int, int>;
+		graph->getAdjacentEdges(i, m);
+		for (auto iter : *m) {
+			e->push_back({{i, iter.first}, iter.second});
+		}
+		delete m;
+	}
+
+	QuickSort(e, 0, e->size() - 1);					//Quick Sort
+
+	int* parent = new int[graph->getSize() + 1];
+	fill(parent, parent + graph->getSize() + 1, -1);
+
+	vector<pair<pair<int, int>, int>> edge;
+
+	while (edge.size() < graph->getSize() - 1 && e->empty() == false) {						//Kruskal
+		if (Find(e->front().first.first, parent) != Find(e->front().first.second, parent)) {//if (v, w) dosen't create cycle
+			Union(e->front().first.first, e->front().first.second, parent);
+			edge.push_back(e->front());
+		}
+		e->erase(e->begin());
+	}
+
+	if (edge.size() < graph->getSize() - 1) {		//contains fewer than n-1 edges
+		delete e;
+		delete[] parent;
+		return false;
+	}
+
+	ofstream fout;									//print format
+	fout.open("log.txt", ios::app);
+	fout << "======Kruskal======\n";
+
+	for (int i = 1; i <= graph->getSize(); i++) {
+		vector<pair<int, int>> temp;
+		for (int j = 0; j < graph->getSize() - 1; j++) {
+			if (edge[j].first.first == i) temp.push_back({edge[j].first.second, edge[j].second});
+			if (edge[j].first.second == i) temp.push_back({edge[j].first.first, edge[j].second});
+		}
+		sort(temp.begin(), temp.end());
+		fout << "[" << i << "] ";
+		for (auto k = temp.begin(); k != temp.end(); k++) fout << k->first << "(" << k->second << ") ";
+		fout << endl;
+	}
+
+	int cost = 0;
+	for (auto iter : edge) cost += iter.second;
+	fout << "cost: " << cost;
+	fout << "\n===================\n\n";
+	delete e;
+	delete[] parent;
+	return true;
+}
+
+void QuickSort(vector<pair<pair<int, int>, int>>* e, int left, int right) {
+	if (left < right) {
+		if (right - left + 1 <= 6) {		//if if size is smaller than 6
+			InsertionSort(e, left, right);
+		}
+		else {
+			int i = left, 
+			j = right + 1,
+			pivot = e->at(left).second;
+			do {
+				do i++; while (e->at(i).second < pivot);
+				do j--; while (e->at(j).second > pivot);
+				if (i < j) swap(e->at(i), e->at(j));
+			} while (i < j);
+			swap(e->at(left), e->at(j));
+
+			QuickSort(e, left, j - 1);		//quick sort
+			QuickSort(e, j + 1, right);
+		}
+	}
+	return;
+}
+
+void InsertionSort(vector<pair<pair<int, int>, int>>* e, int left, int right) {	//insertion sort function
+	for (int i = 2; i <= right; i++) {
+		int pivot = e->at(i).second;
+		auto temp = e->at(i);
+		int j = 0;
+		for (j = i - 1; j >= 0; j--) {
+			if (pivot < e->at(j).second) e->at(j + 1) = e->at(j);	//shift
+			else break;
+		}
+		e->at(j + 1) = temp;										//insert
+	}
+}
+
+void Union(int vertex1, int vertex2, int* parent) { //union operation
+	parent[Find(vertex2, parent)] = vertex1;
+}
+
+int Find(int vertex, int* parent) {					//find operation
+	while (parent[vertex] != -1) vertex = parent[vertex];
+	return vertex;
 }
 
 bool Dijkstra(Graph* graph, char option, int vertex) {
@@ -224,7 +324,7 @@ bool Bellmanford(Graph* graph, char option, int s_vertex, int e_vertex) {
 	}
 	delete m;
 
-	for (int k = 0; k < graph->getSize() - 2; k++) {		//이거맞는지모르게슴요
+	for (int k = 0; k < graph->getSize(); k++) {
 		vector<int> v;
 		for (int i = 1; i <= graph->getSize(); i++) {
 			if (dist[i] != INF) v.push_back(i);
@@ -237,10 +337,19 @@ bool Bellmanford(Graph* graph, char option, int s_vertex, int e_vertex) {
 
 			for (auto iter : *m) {
 				dist[iter.first] = min(dist[v[i]] + iter.second, dist[iter.first]);			//minimum path
-				if (dist[v[i]] + iter.second <= dist[iter.first]) prev[iter.first] = v[i];
+				if (dist[v[i]] + iter.second <= dist[iter.first]) {
+					if (k == graph->getSize() - 1 && dist[v[i]] + iter.second < dist[iter.first]) {	//if negative cycle occurs
+						delete m;
+						delete[] dist;
+						delete[] prev;
+						return false;
+					}
+					prev[iter.first] = v[i];
+				}
 			}
 			delete m;
 		}
+
 	}
 
 	ofstream fout;									//print format
@@ -258,7 +367,7 @@ bool Bellmanford(Graph* graph, char option, int s_vertex, int e_vertex) {
 		num = prev[num];
 	}
 
-	if (dist[e_vertex] < 0) {
+	if (dist[e_vertex] == INF) {
 		fout << "x";
 	}
 	else {
@@ -335,6 +444,12 @@ bool FLOYD(Graph* graph, char option) {
 		fout << "\n";
 	}
 	fout << "=====================\n\n";
+
+	for (int j = 0; j <= graph->getSize(); j++) {
+		delete[] dist[j];
+	}
+	delete[] dist;
+
 	return true;
 }
 
