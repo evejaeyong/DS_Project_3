@@ -24,10 +24,10 @@ bool BFS(Graph* graph, char option, int vertex) {
 	fout << "Graph BFS result\n";
 	fout << "startvertex: " << vertex << "\n";
 	fout << vertex;
-    queue<int> q;
-	bool *visited = new bool[graph->getSize() + 1];			//visited vertex
+	queue<int> q;
+	bool* visited = new bool[graph->getSize() + 1];			//visited vertex
 	fill(visited, visited + graph->getSize() + 1, false);
-	
+
 	visited[vertex] = true;
 	q.push(vertex);												//first vertex
 	int count = 0;
@@ -46,7 +46,7 @@ bool BFS(Graph* graph, char option, int vertex) {
 				visited[iter.first] = true;
 			}
 		}
-		if(count != 0) fout << " -> " << s;
+		if (count != 0) fout << " -> " << s;
 		count++;
 		delete m;
 	}
@@ -66,10 +66,10 @@ bool DFS(Graph* graph, char option, int vertex) {
 	fout << "Graph DFS result\n";
 	fout << "startvertex: " << vertex << "\n";
 	fout << vertex;
-    stack<int> s;
-	bool *visited = new bool[graph->getSize() + 1];				//visited vertex
+	stack<int> s;
+	bool* visited = new bool[graph->getSize() + 1];				//visited vertex
 	fill(visited, visited + graph->getSize() + 1, false);
-	
+
 	visited[vertex] = true;										//first vertex
 	s.push(vertex);
 
@@ -79,7 +79,7 @@ bool DFS(Graph* graph, char option, int vertex) {
 		map <int, int>* m = new map<int, int>;
 		if (option == 'Y') graph->getAdjacentEdgesDirect(st, m);	//Direct
 		else graph->getAdjacentEdges(st, m);						//Undirect
-		
+
 		for (auto iter : *m) {
 			if (!visited[iter.first]) {
 				s.push(iter.first);
@@ -99,11 +99,11 @@ bool Kruskal(Graph* graph) {
 	if (graph == NULL) return false;				//if doesn't have graph
 	vector<pair<pair<int, int>, int>>* e = new vector<pair<pair<int, int>, int>>;	//[(graph->getSize() * graph->getSize() - 1) / 2]
 
-	for (int i = 1; i <= graph->getSize(); i++) {
+	for (int i = 1; i <= graph->getSize(); i++) {	//initialize
 		map <int, int>* m = new map<int, int>;
 		graph->getAdjacentEdges(i, m);
 		for (auto iter : *m) {
-			e->push_back({{i, iter.first}, iter.second});
+			e->push_back({ {i, iter.first}, iter.second });
 		}
 		delete m;
 	}
@@ -135,13 +135,13 @@ bool Kruskal(Graph* graph) {
 
 	for (int i = 1; i <= graph->getSize(); i++) {
 		vector<pair<int, int>> temp;
-		for (int j = 0; j < graph->getSize() - 1; j++) {
-			if (edge[j].first.first == i) temp.push_back({edge[j].first.second, edge[j].second});
-			if (edge[j].first.second == i) temp.push_back({edge[j].first.first, edge[j].second});
+		for (int j = 0; j < graph->getSize() - 1; j++) {		//if start vertex is i
+			if (edge[j].first.first == i) temp.push_back({ edge[j].first.second, edge[j].second });
+			if (edge[j].first.second == i) temp.push_back({ edge[j].first.first, edge[j].second });
 		}
-		sort(temp.begin(), temp.end());
+		sort(temp.begin(), temp.end());							//Sort by to vertex
 		fout << "[" << i << "] ";
-		for (auto k = temp.begin(); k != temp.end(); k++) fout << k->first << "(" << k->second << ") ";
+		for (auto iter : temp) fout << iter.first << "(" << iter.second << ") ";
 		fout << endl;
 	}
 
@@ -160,15 +160,15 @@ void QuickSort(vector<pair<pair<int, int>, int>>* e, int left, int right) {
 			InsertionSort(e, left, right);
 		}
 		else {
-			int i = left, 
-			j = right + 1,
-			pivot = e->at(left).second;
+			int i = left,
+				j = right + 1,
+				pivot = e->at(left).second;
 			do {
 				do i++; while (e->at(i).second < pivot);
 				do j--; while (e->at(j).second > pivot);
 				if (i < j) swap(e->at(i), e->at(j));
 			} while (i < j);
-			swap(e->at(left), e->at(j));
+			swap(e->at(left), e->at(j));	//Bring the pivot to the center
 
 			QuickSort(e, left, j - 1);		//quick sort
 			QuickSort(e, j + 1, right);
@@ -215,7 +215,7 @@ bool Dijkstra(Graph* graph, char option, int vertex) {
 	if (option == 'Y') graph->getAdjacentEdgesDirect(vertex, m);	//Direct
 	else graph->getAdjacentEdges(vertex, m);						//Undirect
 
-	for (auto iter : *m) {							//initialize
+	for (auto iter : *m) {
 		if (iter.second < 0) {						//if negative edge
 			delete[] s;
 			delete[] dist;
@@ -223,13 +223,13 @@ bool Dijkstra(Graph* graph, char option, int vertex) {
 			delete m;
 			return false;
 		}
-		dist[iter.first] = iter.second;
+		dist[iter.first] = iter.second;				//initialize
 		prev[iter.first] = vertex;
-		
+
 	}
 	delete m;
 
-	s[vertex] = true;
+	s[vertex] = true;								//first vertex
 	dist[vertex] = 0;
 	prev[vertex] = 0;
 
@@ -270,24 +270,24 @@ bool Dijkstra(Graph* graph, char option, int vertex) {
 	else fout << "Undirected ";
 	fout << "Graph Dijkstra result\n";
 	fout << "startvertex: " << vertex;
-	
+
 	for (int i = 1; i <= graph->getSize(); i++) {
 		if (i == vertex) continue;
 		stack<int> s;
 		int num = i;
 		fout << "\n[" << i << "] ";					//vertex number
 
-		while (num != vertex && prev[num] != -1) {
+		while (num != vertex && prev[num] != -1) {	//path
 			s.push(num);
 			num = prev[num];
 		}
 
-		if (prev[num] == -1) {
+		if (prev[num] == -1) {						//if no path
 			fout << "x";
 		}
 		else {
 			fout << vertex;
-			while (!s.empty()) {
+			while (!s.empty()) {					//print
 				fout << " -> " << s.top();
 				s.pop();
 			}
@@ -326,7 +326,7 @@ bool Bellmanford(Graph* graph, char option, int s_vertex, int e_vertex) {
 
 	for (int k = 0; k < graph->getSize(); k++) {
 		vector<int> v;
-		for (int i = 1; i <= graph->getSize(); i++) {
+		for (int i = 1; i <= graph->getSize(); i++) {				//find vertex
 			if (dist[i] != INF) v.push_back(i);
 		}
 
@@ -362,33 +362,33 @@ bool Bellmanford(Graph* graph, char option, int s_vertex, int e_vertex) {
 	stack<int> s;
 	int num = e_vertex;
 
-	while (num != s_vertex && prev[num] != -1) {
+	while (num != s_vertex && prev[num] != -1) {	//path
 		s.push(num);
 		num = prev[num];
 	}
-
-	if (dist[e_vertex] == INF) {
+		
+	if (dist[e_vertex] == INF) {					//if no path
 		fout << "x";
 	}
 	else {
 		fout << s_vertex;
-		while (!s.empty()) {
+		while (!s.empty()) {						//print
 			fout << " -> " << s.top();
 			s.pop();
 		}
 		fout << "\ncost: " << dist[e_vertex];
 	}
 	fout << "\n========================\n\n";
-	
+
 	delete[] dist;
 	delete[] prev;
 	return true;
 }
 
 bool FLOYD(Graph* graph, char option) {
-	if (graph == nullptr) return false; 
+	if (graph == nullptr) return false;
 	int** dist = new int* [graph->getSize() + 1];
-	for (int i = 0; i < graph->getSize() + 1; i++) {
+	for (int i = 0; i < graph->getSize() + 1; i++) {			//2D array define
 		dist[i] = new int[graph->getSize() + 1];
 		fill(dist[i], dist[i] + graph->getSize() + 1, INF);
 	}
@@ -400,7 +400,7 @@ bool FLOYD(Graph* graph, char option) {
 
 		dist[i][i] = 0;
 		for (auto iter : *m) {
-			dist[i][iter.first] = iter.second;
+			dist[i][iter.first] = iter.second;					//path
 		}
 		delete m;
 	}
@@ -414,7 +414,7 @@ bool FLOYD(Graph* graph, char option) {
 	}
 
 	for (int i = 1; i <= graph->getSize(); i++) {
-		if (dist[i][i] < 0) {
+		if (dist[i][i] < 0) {									//if negative cycle occurs
 			for (int j = 0; j <= graph->getSize(); j++) {
 				delete[] dist[j];
 			}
@@ -422,7 +422,7 @@ bool FLOYD(Graph* graph, char option) {
 			return false;
 		}
 	}
-		
+
 	ofstream fout;									//print format
 	fout.open("log.txt", ios::app);
 	fout << "========FLOYD========\n";
@@ -436,7 +436,7 @@ bool FLOYD(Graph* graph, char option) {
 	}
 	fout << "\n";
 	for (int i = 1; i <= graph->getSize(); i++) {
-		for (int j = 0; j <= graph->getSize(); j++) {	
+		for (int j = 0; j <= graph->getSize(); j++) {
 			if (j == 0) fout << "[" << i << "]\t";					//matrix no
 			else if (dist[i][j] != INF) fout << dist[i][j] << "\t";	//distance
 			else fout << "x\t";										//infinite
@@ -445,7 +445,7 @@ bool FLOYD(Graph* graph, char option) {
 	}
 	fout << "=====================\n\n";
 
-	for (int j = 0; j <= graph->getSize(); j++) {
+	for (int j = 0; j <= graph->getSize(); j++) {		//memory deallocate
 		delete[] dist[j];
 	}
 	delete[] dist;
@@ -457,48 +457,47 @@ bool KWANGWOON(Graph* graph, int vertex) {
 	if (graph == nullptr) return false;
 	if (!graph->getType()) return false;
 
-	vector<int>* kw_graph = graph->Get_KW_Graph();
+	vector<int>* kw_graph = graph->Get_KW_Graph();		//get kw_graph
 
-	int** tree = new int*[graph->getSize() + 1];
+	int** tree = new int* [graph->getSize() + 1];			//2D array
 	for (int i = 0; i < graph->getSize() + 1; i++) {
-		tree[i] = new int[graph->getSize() * 4];
+		tree[i] = new int[graph->getSize() * 4];			//size * 4
 		fill(tree[i], tree[i] + graph->getSize() * 4, 0);
 	}
 
-	for (int i = 1; i <= graph->getSize(); i++) {					//initialize
+	for (int i = 1; i <= graph->getSize(); i++) {			//initialize
 		sort(kw_graph[i].begin(), kw_graph[i].end());
 		init(tree[i], 0, kw_graph[i].size() - 1, 1);
 	}
 
 	queue<int> q;
-
 	int v = 1;
-	bool* visited = new bool[graph->getSize() + 1];					//visited
+	bool* visited = new bool[graph->getSize() + 1];			//visited
 	fill(visited, visited + graph->getSize() + 1, false);
 
 	for (int i = 0; i < graph->getSize(); i++) {
 		visited[v] = true;
 
 		for (int j = 1; j <= graph->getSize(); j++) {
-			if (visited[j]) continue;
+			if (visited[j]) continue;						//if visit
 
 			auto iter = find(kw_graph[j].begin(), kw_graph[j].end(), v);
-			if (iter == kw_graph[j].end()) continue;
+			if (iter == kw_graph[j].end()) continue;		//if can't find
 
-			update(tree[j], 0, kw_graph[j].size() - 1, 1, iter - kw_graph[j].begin(), -1);
+			update(tree[j], 0, kw_graph[j].size() - 1, 1, iter - kw_graph[j].begin(), -1);	//else update
 		}
-		q.push(v);
+		q.push(v);											//push vertex
 
-		if (tree[v][1] % 2 == 1) {
+		if (tree[v][1] % 2 == 1) {							//next vertex
 			int size = kw_graph[v].size() - 1;
-			while (size >= 0 && visited[kw_graph[v][size]] != false) size--;
-			if (size < 0) break;
+			while (size >= 0 && visited[kw_graph[v][size]] != false) size--;					//if last vertex visit size down
+			if (size < 0) break;																//if all vertex visit
 			v = kw_graph[v][size];
 		}
 		else {
 			int size = 0;
-			while (size < kw_graph[v].size() && visited[kw_graph[v][size]] != false) size++;
-			if (size >= kw_graph[v].size()) break;
+			while (size < kw_graph[v].size() && visited[kw_graph[v][size]] != false) size++;	//if first vertex visit size up
+			if (size >= kw_graph[v].size()) break;												//if all vertex visit
 			v = kw_graph[v][size];
 		}
 	}
@@ -507,32 +506,30 @@ bool KWANGWOON(Graph* graph, int vertex) {
 	fout.open("log.txt", ios::app);
 	fout << "========KWANGWOON========\n";
 	fout << "startvertex: 1\n";
-
-	while (!q.empty()) {
+	while (!q.empty()) {											//print
 		fout << q.front();
 		q.pop();
 		if (!q.empty()) fout << " -> ";
 	}
-
 	fout << "\n=========================\n\n";
+
 	delete[] visited;
-	for (int i = 0; i < graph->getSize() + 1; i++) {
+	for (int i = 0; i < graph->getSize() + 1; i++) {				//memory deallocate
 		delete[] tree[i];
 	}
-
 	delete[] tree;
 	return true;
 }
 
-int init(int* tree, int start, int end, int node) {
+int init(int* tree, int start, int end, int node) {					//segmant tree init
 	if (start == end) return tree[node] = 1;
 	int mid = (start + end) / 2;
 
 	return tree[node] = init(tree, start, mid, node * 2) + init(tree, mid + 1, end, node * 2 + 1);
 }
 
-void update(int* tree, int start, int end, int node, int index, int dif) {
-	if (index < start || index > end) return;
+void update(int* tree, int start, int end, int node, int index, int dif) {	//segmant tree update
+	if (index < start || index > end) return;								//size out
 	tree[node] += dif;
 	if (start == end) return;
 	int mid = (start + end) / 2;

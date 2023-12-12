@@ -225,7 +225,7 @@ bool Manager::LOAD(const char* filename) {
 			}
 
 		}
-		else {				//matrix
+		else {					//matrix
 			graph = new MatrixGraph(m_type, size);
 			int num;
 			for (int i = 1; i <= size; i++) {
@@ -292,7 +292,7 @@ bool Manager::mKwoonWoon(int vertex) {
 }
 
 void Manager::printErrorCode(int n) {
-	if (!fout.is_open()) fout.open("log.txt", ios::app);
+	if (!fout.is_open()) fout.open("log.txt", ios::app);		//if log file isn't open
 	fout << "========ERROR=======" << endl;
 	fout << n << endl;
 	fout << "====================" << endl << endl;
