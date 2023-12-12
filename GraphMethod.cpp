@@ -454,5 +454,88 @@ bool FLOYD(Graph* graph, char option) {
 }
 
 bool KWANGWOON(Graph* graph, int vertex) {
-	return false;
+	if (graph == nullptr) return false;
+	if (!graph->getType()) return false;
+
+	vector<int>* kw_graph = graph->Get_KW_Graph();
+
+	int** tree = new int*[graph->getSize() + 1];
+	for (int i = 0; i < graph->getSize() + 1; i++) {
+		tree[i] = new int[graph->getSize() * 4];
+		fill(tree[i], tree[i] + graph->getSize() * 4, 0);
+	}
+
+	for (int i = 1; i <= graph->getSize(); i++) {					//initialize
+		sort(kw_graph[i].begin(), kw_graph[i].end());
+		init(tree[i], 0, kw_graph[i].size() - 1, 1);
+	}
+
+	queue<int> q;
+
+	int v = 1;
+	bool* visited = new bool[graph->getSize() + 1];					//visited
+	fill(visited, visited + graph->getSize() + 1, false);
+
+	for (int i = 0; i < graph->getSize(); i++) {
+		visited[v] = true;
+
+		for (int j = 1; j <= graph->getSize(); j++) {
+			if (visited[j]) continue;
+
+			auto iter = find(kw_graph[j].begin(), kw_graph[j].end(), v);
+			if (iter == kw_graph[j].end()) continue;
+
+			update(tree[j], 0, kw_graph[j].size() - 1, 1, iter - kw_graph[j].begin(), -1);
+		}
+		q.push(v);
+
+		if (tree[v][1] % 2 == 1) {
+			int size = kw_graph[v].size() - 1;
+			while (size >= 0 && visited[kw_graph[v][size]] != false) size--;
+			if (size < 0) break;
+			v = kw_graph[v][size];
+		}
+		else {
+			int size = 0;
+			while (size < kw_graph[v].size() && visited[kw_graph[v][size]] != false) size++;
+			if (size >= kw_graph[v].size()) break;
+			v = kw_graph[v][size];
+		}
+	}
+
+	ofstream fout;													//print format
+	fout.open("log.txt", ios::app);
+	fout << "========KWANGWOON========\n";
+	fout << "startvertex: 1\n";
+
+	while (!q.empty()) {
+		fout << q.front();
+		q.pop();
+		if (!q.empty()) fout << " -> ";
+	}
+
+	fout << "\n=========================\n\n";
+	delete[] visited;
+	for (int i = 0; i < graph->getSize() + 1; i++) {
+		delete[] tree[i];
+	}
+
+	delete[] tree;
+	return true;
+}
+
+int init(int* tree, int start, int end, int node) {
+	if (start == end) return tree[node] = 1;
+	int mid = (start + end) / 2;
+
+	return tree[node] = init(tree, start, mid, node * 2) + init(tree, mid + 1, end, node * 2 + 1);
+}
+
+void update(int* tree, int start, int end, int node, int index, int dif) {
+	if (index < start || index > end) return;
+	tree[node] += dif;
+	if (start == end) return;
+	int mid = (start + end) / 2;
+	update(tree, start, mid, node * 2, index, dif);
+	update(tree, mid + 1, end, node * 2 + 1, index, dif);
 }

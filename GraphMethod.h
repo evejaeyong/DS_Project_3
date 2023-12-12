@@ -17,4 +17,7 @@ void InsertionSort(vector<pair<pair<int, int>, int>>* e, int left, int right);
 void Union(int vertex1, int vertex2, int* parent);
 int Find(int vertex, int* parent);
 
+int init(int* tree, int start, int end, int node);
+void update(int* tree, int start, int end, int node, int index, int dif);
+
 #endif

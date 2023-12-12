@@ -32,8 +32,8 @@ void ListGraph::getAdjacentEdgesDirect(int vertex, map<int, int>* m) {  //Defini
 
 void ListGraph::insertEdge(int from, int to, int weight) {              //Definition of insertEdge
 	m_List[from - 1].insert({to, weight});
-	kw_graph[from].push_back(to);
-	kw_graph[to].push_back(from);
+	if (find(kw_graph[from].begin(), kw_graph[from].end(), to) == kw_graph[from].end()) kw_graph[from].push_back(to);
+	if (find(kw_graph[to].begin(), kw_graph[to].end(), from) == kw_graph[to].end()) kw_graph[to].push_back(from);
 }
 
 bool ListGraph::printGraph(ofstream *fout) {                            //Definition of print Graph
