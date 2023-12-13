@@ -8,7 +8,7 @@
 #include <set>
 #include <list>
 #include <utility>
-#define INF 1000000000
+#define INF 100000000
 
 using namespace std;
 
@@ -203,6 +203,20 @@ bool Dijkstra(Graph* graph, char option, int vertex) {
 	if (graph == NULL) return false;				//if doesn't have graph
 	if (vertex > graph->getSize()) return false;
 
+	map <int, int>* m;
+
+	for (int i = 1; i <= graph->getSize(); i++) {
+		m = new map<int, int>;
+		graph->getAdjacentEdgesDirect(i, m);
+		for (auto iter : *m) {
+			if (iter.second < 0) {						//if negative edge
+				delete m;
+				return false;
+			}
+		}
+		delete m;
+	}
+
 	bool* s = new bool[graph->getSize() + 1];		//visited
 	int* dist = new int[graph->getSize() + 1];		//distance
 	int* prev = new int[graph->getSize() + 1];		//prev vertex
@@ -211,21 +225,13 @@ bool Dijkstra(Graph* graph, char option, int vertex) {
 	fill(dist, dist + graph->getSize() + 1, INF);
 	fill(prev, prev + graph->getSize() + 1, -1);
 
-	map <int, int>* m = new map<int, int>;
+	m = new map<int, int>;
 	if (option == 'Y') graph->getAdjacentEdgesDirect(vertex, m);	//Direct
 	else graph->getAdjacentEdges(vertex, m);						//Undirect
 
 	for (auto iter : *m) {
-		if (iter.second < 0) {						//if negative edge
-			delete[] s;
-			delete[] dist;
-			delete[] prev;
-			delete m;
-			return false;
-		}
 		dist[iter.first] = iter.second;				//initialize
 		prev[iter.first] = vertex;
-
 	}
 	delete m;
 
@@ -233,7 +239,7 @@ bool Dijkstra(Graph* graph, char option, int vertex) {
 	dist[vertex] = 0;
 	prev[vertex] = 0;
 
-	for (int i = 0; i < graph->getSize() - 2; i++) {
+	for (int i = 0; i < graph->getSize(); i++) {
 		int u = INF;
 
 		for (int j = 1; j <= graph->getSize(); j++) {		//choose
@@ -248,16 +254,8 @@ bool Dijkstra(Graph* graph, char option, int vertex) {
 			else graph->getAdjacentEdges(u, m);						//Undirect
 
 			for (auto iter : *m) {
-				if (iter.second < 0) {						//if negative edge
-					delete[] s;
-					delete[] dist;
-					delete[] prev;
-					delete m;
-					return false;
-				}
-
-				dist[iter.first] = min(dist[u] + iter.second, dist[iter.first]);	//minimum path
 				if (dist[u] + iter.second <= dist[iter.first]) prev[iter.first] = u;
+				dist[iter.first] = min(dist[u] + iter.second, dist[iter.first]);	//minimum path
 			}
 			delete m;
 		}
@@ -336,7 +334,6 @@ bool Bellmanford(Graph* graph, char option, int s_vertex, int e_vertex) {
 			else graph->getAdjacentEdges(v[i], m);						//Undirect
 
 			for (auto iter : *m) {
-				dist[iter.first] = min(dist[v[i]] + iter.second, dist[iter.first]);			//minimum path
 				if (dist[v[i]] + iter.second <= dist[iter.first]) {
 					if (k == graph->getSize() - 1 && dist[v[i]] + iter.second < dist[iter.first]) {	//if negative cycle occurs
 						delete m;
@@ -344,6 +341,7 @@ bool Bellmanford(Graph* graph, char option, int s_vertex, int e_vertex) {
 						delete[] prev;
 						return false;
 					}
+					dist[iter.first] = min(dist[v[i]] + iter.second, dist[iter.first]);			//minimum path
 					prev[iter.first] = v[i];
 				}
 			}
@@ -366,7 +364,7 @@ bool Bellmanford(Graph* graph, char option, int s_vertex, int e_vertex) {
 		s.push(num);
 		num = prev[num];
 	}
-		
+
 	if (dist[e_vertex] == INF) {					//if no path
 		fout << "x";
 	}
@@ -408,6 +406,7 @@ bool FLOYD(Graph* graph, char option) {
 	for (int k = 1; k <= graph->getSize(); k++) {
 		for (int i = 1; i <= graph->getSize(); i++) {
 			for (int j = 1; j <= graph->getSize(); j++) {
+				if (dist[i][k] == INF || dist[k][j] == INF) continue;
 				dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);	//Floyd
 			}
 		}

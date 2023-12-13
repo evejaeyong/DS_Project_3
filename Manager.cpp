@@ -186,7 +186,7 @@ bool Manager::LOAD(const char* filename) {
 
 	if (!fgraph) return false;		//can't read file
 	else {
-		if (load == 1) delete graph;	//already graph exist
+		if (graph) delete graph;	//already graph exist
 			
 		char type;
 		bool m_type;
