@@ -31,6 +31,7 @@ void Manager::run(const char* command_txt) {
 			string line, command;
 			int num = 0;
 			getline(fin, line);
+			if (line[0] == '\0') break;
 			while (line[num] != '\0' && line[num] != ' ') {
 				command.push_back(line[num]);
 				num++;
@@ -187,13 +188,14 @@ bool Manager::LOAD(const char* filename) {
 	if (!fgraph) return false;		//can't read file
 	else {
 		if (graph) delete graph;	//already graph exist
-			
-		char type;
+		
+		string type;
 		bool m_type;
 		int size;
-		fgraph >> type;
+		getline(fgraph, type);
+		if (type[0] == '\0') return false;
 
-		if (type == 'L') m_type = true;		//List is true
+		if (type[0] == 'L') m_type = true;		//List is true
 		else m_type = false;				//Matrix is false
 
 		fgraph >> size;
